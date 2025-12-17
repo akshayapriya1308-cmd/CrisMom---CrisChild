@@ -69,6 +69,17 @@ const App = () => {
   // Refresh state helper
   const refresh = () => setState(loadState());
 
+  // Listen for storage changes (multi-tab support)
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'crismom_app_data') {
+        setState(loadState());
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   // Check login persistence
   useEffect(() => {
     const s = loadState();
@@ -533,6 +544,12 @@ const App = () => {
                   <Trophy className="w-4 h-4" /> View Leaderboard
                 </button>
                 <button 
+                  onClick={refresh} 
+                  className="w-full text-left px-4 py-2 text-slate-500 text-sm hover:bg-slate-100 rounded-lg flex items-center gap-2"
+                >
+                  <RefreshCcw className="w-4 h-4" /> Refresh Data
+                </button>
+                <button 
                   onClick={resetGame}
                   className="w-full text-left px-4 py-2 text-red-500 text-sm hover:bg-red-50 rounded-lg flex items-center gap-2"
                 >
@@ -705,6 +722,14 @@ const App = () => {
               title="Leaderboard"
             >
               <Trophy className="w-5 h-5" />
+            </button>
+            
+            <button 
+              onClick={refresh} 
+              className="text-slate-400 hover:text-purple-600 p-2 rounded-full transition-all" 
+              title="Refresh Data"
+            >
+              <RefreshCcw className="w-5 h-5" />
             </button>
 
             <div className="w-px h-6 bg-slate-200"></div>
